@@ -13,7 +13,6 @@ env:
 jobs:
   release:
     # Only release on push to main on xdy/xdy-pf2e-workbench
-    if: github.event_name == 'push' && (github.ref == 'refs/heads/main') && github.repository == 'xdy/xdy-pf2e-workbench'
     runs-on: ubuntu-latest
 
     steps:
@@ -41,10 +40,6 @@ jobs:
       - name: Install
         run: npm install
 
-      - name: install fvtt cli
-        id: fvtt-install
-        run: npm install -g @foundryvtt/foundryvtt-cli
-
       - name: Build packs
         run: npm run build:packs
 
@@ -54,7 +49,6 @@ jobs:
       - name: Release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: npx semantic-release
 
       - name: Get Module ID
@@ -88,23 +82,3 @@ jobs:
       - name: get-npm-version
         id: package-version
         uses: martinbeentjes/npm-get-version-action@v1.3.1
-
-      - name: Submit package to FoundryVTT Package Release API
-        run: |
-          curl -X POST "https://api.foundryvtt.com/_api/packages/release_version/" \
-            -H "Content-Type: application/json" \
-            -H "Authorization: ${{ secrets.FOUNDRYVTT_RELEASE_TOKEN }}" \
-            -d '{
-              "id": "${{ steps.moduleID.outputs.prop }}",
-              "dry-run": false,
-              "release": {
-                "version": "${{ steps.package-version.outputs.current-version}}",
-                "manifest": "https://github.com/${{ github.repository }}/releases/latest/download/module.json",
-                "notes": "https://github.com/${{ github.repository }}/blob/master/CHANGELOG.md",
-                "compatibility": {
-                  "minimum": "${{ steps.minimum.outputs.prop }}",
-                  "verified": "${{ steps.verified.outputs.prop }}",
-                  "maximum": "${{ steps.maximum.outputs.prop }}"
-                }
-             }
-           }'
