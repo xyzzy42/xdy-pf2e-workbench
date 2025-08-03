@@ -1,8 +1,9 @@
 name: PF2e Workbench CI
 
 on:
+  workflow_dispatch:
+  workflow_call:
   pull_request:
-    branches: [main]
 
 jobs:
   build:
@@ -15,12 +16,13 @@ jobs:
 
     steps:
       - name: Checkout 
-      - uses: actions/checkout@v4
+        uses: actions/checkout@v4
 
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
+          cache: 'npm'
 
       - name: Cache NPM Deps
         id: cache-npm
@@ -41,5 +43,3 @@ jobs:
       - name: Lint
         run: |
           npm run lint
-
-
