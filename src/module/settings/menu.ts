@@ -26,9 +26,11 @@ interface HideListTemplateData {
     };
 }
 
+const FAFormApplication = foundry.appv1?.api.FormApplication ??
+    // @ts-expect-error For V12 compat
+    FormApplication;
 /** An adjusted copy of the settings menu from core pf2e meant for the module */
-// @ts-ignore
-export class SettingsMenuPF2eWorkbench extends foundry.appv1.api.FormApplication {
+export class SettingsMenuPF2eWorkbench extends FAFormApplication {
     static readonly namespace: string;
 
     static override get defaultOptions() {

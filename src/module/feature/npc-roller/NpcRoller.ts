@@ -62,7 +62,10 @@ export function enableNpcRollerButton(_app: unknown, html: JQuery | HTMLElement)
     }
 }
 
-class NpcRoller extends foundry.appv1.api.Application {
+const FAApplication = foundry.appv1?.api.Application ?? 
+    // @ts-expect-error For V12 compat
+    Application;
+class NpcRoller extends FAApplication {
     public constructor(options?: foundry.appv1.api.ApplicationV1Options) {
         super(options);
 
